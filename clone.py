@@ -12,16 +12,28 @@ with open('./data/driving_log.csv') as csvfile:
 images = []
 measurements = []
 
+def get_img(path):
+  filename = path.split('/')[-1]
+  current_path = './data/IMG/' + filename
+  image = cv2.imread(current_path)
+  return image
+
 for index, line in enumerate(lines):
   if index == 0:
     continue
-  source_path = line[0]
-  filename = source_path.split('/')[-1]
-  current_path = './data/IMG/' + filename
-  image = cv2.imread(current_path)
-  images.append(image)
-  measurement = float(line[3])
-  measurements.append(measurement)
+
+  center_img = get_img(line[0])
+  left_img = get_img(line[1])
+  right_img = get_img(line[2])
+
+  images.extend(center_img, left_img, right_img)
+
+  correction = 0.2
+  steering_center = float(line[3])
+  steering_left = steering_center + correction
+  steering_right = steering_center - correction
+  
+  measurements.append(steering_center, steering_left, steering_right)
 
 augmented_images, augmented_measurements = [], []
 for image, measurement in zip(images, measurements):
@@ -34,12 +46,13 @@ X_train = np.array(augmented_images)
 y_train = np.array(augmented_measurements)
 
 from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda
+from keras.layers import Flatten, Dense, Lambda, Cropping2D
 from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
 
 model = Sequential()
-model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160, 320, 3)))
+model.add(Cropping2D(cropping=((50, 20), (0, 0)), input_shape=(160, 320, 3)))
+model.add(Lambda(lambda x: (x / 255.0) - 0.5))
 model.add(Convolution2D(6, 5, 5, activation='relu'))
 model.add(MaxPooling2D())
 model.add(Convolution2D(6, 5, 5, activation='relu'))
