@@ -26,14 +26,14 @@ for index, line in enumerate(lines):
   left_img = get_img(line[1])
   right_img = get_img(line[2])
 
-  images.extend(center_img, left_img, right_img)
+  images.extend([center_img, left_img, right_img])
 
   correction = 0.2
   steering_center = float(line[3])
   steering_left = steering_center + correction
   steering_right = steering_center - correction
   
-  measurements.append(steering_center, steering_left, steering_right)
+  measurements.append([steering_center, steering_left, steering_right])
 
 augmented_images, augmented_measurements = [], []
 for image, measurement in zip(images, measurements):
