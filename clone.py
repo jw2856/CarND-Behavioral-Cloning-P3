@@ -33,7 +33,7 @@ for index, line in enumerate(lines):
 
   images.extend([center_img, left_img, right_img])
 
-  correction = 0.2
+  correction = 0.25
   steering_center = float(line[3])
   steering_left = steering_center + correction
   steering_right = steering_center - correction
