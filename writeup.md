@@ -13,9 +13,9 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[data-distribution]: ./examples/data-distribution.png "Data distribution"
-[balanced-data]: ./examples/updated-steering-angles-histogram.png "Balanced data distribution"
-[loss-graph]: ./examples/loss-graph.png "Loss graph"
+[data-distribution]: ./data-distribution.png "Data distribution"
+[balanced-data]: ./updated-steering-angles-histogram.png "Balanced data distribution"
+[loss-graph]: ./loss-graph.png "Loss graph"
 [center]: ./examples/center-sample.jpg "Center"
 [left]: ./examples/left-sample.jpg "Left"
 [right]: ./examples/right-sample.jpg "Right"
