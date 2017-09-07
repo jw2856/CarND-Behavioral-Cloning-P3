@@ -99,7 +99,7 @@ I initially gathered my own data and used it on a variety of iterations of both 
 
 I had originally recorded many frames of data using the keyboard and mouse, in either direction around the track, including recovery driving. However, my model performed poorly training on this data, though at that point my network was incomplete. I switched to the Udacity data since it was proven and used it for the rest of the project.
 
-I wrote a function to delete a percentage of these low-numbered measurements. Depending on the keep probability constant, a balanced dataset might look like this:
+I wrote a function to delete a percentage of these low-numbered measurements. Here is an example of a balanced dataset with a keep probability of 30%:
 
 ![Balanced data][balanced-data]
 
