@@ -12,13 +12,18 @@ from keras.optimizers import Adam
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-# Constants
 
+##### Constants ######
 SIDE_CAMERA_CORRECTION = 0.2
+
+# Bins for plotting histogram of steering angles
 BINS = [-1, -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 
             0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
 
-# Functions
+# Probability of keeping  data between 0 and 0.1
+KEEP_PROB = .3
+
+##### Functions #######
 
 def readDrivingLog(file):
     lines = []
@@ -37,6 +42,8 @@ def get_img(path):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     return image
 
+# Save a histogram plot of the distribution of samples
+# ----------------------------------------------------
 def plotHistogram(lines, file):
     steeringAngles = []
 
@@ -53,9 +60,11 @@ def plotHistogram(lines, file):
     plt.savefig(file)
     plt.gcf().clear()
 
+# Balance data by removing a percentage of steering samples that are between
+# 0/0 and 0.1
+# --------------------------------------------------------------------------
 def balanceData(lines):
     newLines = []
-    KEEP_PROB = 1.
 
     for index, line in enumerate(lines):
         if ((float(line[3]) >= 0 and float(line[3]) < 0.1) and (random.random() > KEEP_PROB)):
@@ -65,12 +74,18 @@ def balanceData(lines):
 
     return newLines
 
+# Flip image
+# ----------
 def getFlippedImage(image):
     return cv2.flip(image, 1)
 
+# Flip measurement
+# ----------------
 def getFlippedMeasurement(measurement):
     return measurement*-1
 
+# Load the images and measurements
+# --------------------------------
 def loadImagesAndMeasurements(lines):
     images, measurements = [], []
     
@@ -98,22 +113,16 @@ def loadImagesAndMeasurements(lines):
 
     return images, measurements
 
-# def preprocess(images, measurements):
-#     augmented_images, augmented_measurements = [], []
-
-#     for image, measurement in zip(images, measurements):
-#         augmented_images.append(image)
-#         augmented_measurements.append(measurement)
-#         augmented_images.append(cv2.flip(image, 1))
-#         augmented_measurements.append(measurement*-1)
-
-#     return augmented_images, augmented_measurements
-
+# Preprocessing layers for the images. Consists of normalization and 
+# mean-centering, followed by a cropping layer.
+# ------------------------------------------------------------------
 def preprocess(model):
     model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
     model.add(Cropping2D(cropping=((50, 20), (0, 0))))
     return model
 
+# Keras implementation of the Nvidia model
+# ----------------------------------------
 def nvidia():
     model = Sequential()
     model = preprocess(model)
@@ -127,38 +136,37 @@ def nvidia():
     model.add(Dense(50))
     model.add(Dense(10))
     model.add(Dense(1))
-    # model.compile(loss='mse', optimizer=Adam(lr=1e-4))
     model.compile(loss='mse', optimizer='adam')
 
     return model
 
-# Script ----------------------------------------------------------------------
+# Save the training and validation loss for each epoch
+# ----------------------------------------------------
+def saveLossGraph(historyObject, file):
+    plt.plot(historyObject.history['loss'])
+    plt.plot(historyObject.history['val_loss'])
+    plt.title('model mean squared error loss')
+    plt.ylabel('mean squared error loss')
+    plt.xlabel('epoch')
+    plt.legend(['training set', 'validation set'], loc='upper right')
+    plt.savefig(file)
+    plt.gcf().clear()
+
+##### Main Script #####
+# ---------------------
 
 lines = readDrivingLog('./data/driving_log.csv')
 plotHistogram(lines, 'data-distribution.png')
 # lines = balanceData(lines)
 # plotHistogram(lines, 'updated-steering-angles-histogram.png')
 images, measurements = loadImagesAndMeasurements(lines)
-# augmented_images, augmented_measurements = preprocess(images, measurements)
-
 
 X_train = np.array(images)
 y_train = np.array(measurements)
 
 model = nvidia()
-history_object = model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=2, verbose=1)
+history = model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=2, verbose=1)
 
-### print the keys contained in the history object
-print(history_object.history.keys())
+saveLossGraph(history, 'loss-graph.png')
 
-### plot the training and validation loss for each epoch
-plt.plot(history_object.history['loss'])
-plt.plot(history_object.history['val_loss'])
-plt.title('model mean squared error loss')
-plt.ylabel('mean squared error loss')
-plt.xlabel('epoch')
-plt.legend(['training set', 'validation set'], loc='upper right')
-plt.savefig('loss-graph.png')
-plt.gcf().clear()
-
-model.save('model.h5')
+# model.save('model.h5')

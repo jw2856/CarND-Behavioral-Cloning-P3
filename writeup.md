@@ -14,6 +14,7 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [data-distribution]: ./examples/data-distribution.png "Data distribution"
+[balanced-data]: ./examples/updated-steering-angles-histogram.png "Balanced data distribution"
 [loss-graph]: ./examples/loss-graph.png "Loss graph"
 [center]: ./examples/center-sample.jpg "Center"
 [left]: ./examples/left-sample.jpg "Left"
@@ -51,7 +52,7 @@ The model.py file contains the code for training and saving the convolution neur
 
 ### Model Architecture and Training Strategy
 
-#### 1. An appropriate model architecture has been employed
+#### 1. Model Architecture
 
 I used the Nvidia architecture, which consists of the following layers:
 
@@ -82,20 +83,7 @@ I preprocessed the images by normalizing and mean-centering using a Keras lambda
 |:--------:|:------------:|:------------:|
 | ![left cropped][left-cropped] | ![center cropped][center-cropped] | ![right cropped][right-cropped] |
 
-#### 2. Attempts to reduce overfitting in the model
-
-The
-
-
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
-
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
-
-####3. Model parameter tuning
-
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
-
-#### 4. Appropriate training data
+#### 2. Training Data
 
 I trained my model on the Udacity provided data, which contains 8036 samples, with each sample containing three images, one from the center, left and right cameras on the vehicle.
 
@@ -103,53 +91,33 @@ Graphing the distribution of the data by steering angle, we can see that there a
 
 ![Data distribution][data-distribution]
 
-I wrote a function to delete a percentage of these low-numbered measurements, but the ultimate model did not utilize this function.
-
 To augment the Udacity training set, I used the left and right images as well, using a correction factor of 0.2. I also flipped each of the images and measurements (including the left and right images) to balance the data.
 
 ### Model Architecture and Training Strategy
 
-#### 1. Solution Design Approach
+I initially gathered my own data and used it on a variety of iterations of both the LeNet model and the Nvidia model. The LeNet model performed very poorly and so I continued with the Nvidia model and tweaking parameters, including attempting to balance the data, adding dropout layers, and adjusting the number of epochs.
 
-I followed the suggestions on the Udacity classes
+I had originally recorded many frames of data using the keyboard and mouse, in either direction around the track, including recovery driving. However, my model performed poorly training on this data, though at that point my network was incomplete. I switched to the Udacity data since it was proven and used it for the rest of the project.
 
+I wrote a function to delete a percentage of these low-numbered measurements. Depending on the keep probability constant, a balanced dataset might look like this:
 
+![Balanced data][balanced-data-distribution]
 
+The final model did not utilize this function, as it was unnecessary.
 
-
-
-
-
-
-
-
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
-
-####2. Final Model Architecture
-
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
-
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
-
-
-
-
------------------------------------------------------------------------
-
-#### 3. Creation of the Training Set & Training Process
-
-I utilized the Udacity training set to create the final model. I had originally recorded many frames of data using the keyboard and mouse, in either direction around the track, including recovery driving. However, my model performed poorly training on this data, though at that point my network was incomplete. I switched to the Udacity data since it was proven and used it for the rest of the project.
+Ultimately, I found a successful model by utilizing the Udacity-provided data, and reverting to the straightforward approach recommended by the Nvidia model. The data augmentation steps that I took on the Udacity data resulted in a training dataset of 38,572 samples. The model did not need very many epochs to train, as the training loss was very low even after one epoch. The validation loss would not predictably decrease with more epochs.
 
 For each training session, 20% of the dataset was withheld for validation.
 
 I used mean-squared error to measure the error, and I used the Adam optimizer for optimization with the default learning rate of 1.0e-3.
+
+The loss graph for the model is below:
+
+![Loss graph][loss-graph]
+
+### Improvements
+
+To improve the model, there are certain approaches that I can take in the future:
+- Use a better method to balance the data, rather than the naive approach in the unused function I wrote.
+- Use techniques to generate random variations on the training data, such as rotating the images, adding shadows, etc.
+- Gather and train the model on the second track to see how the model works in a more complex environment.
