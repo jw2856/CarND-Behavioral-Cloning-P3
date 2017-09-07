@@ -76,10 +76,11 @@ I preprocessed the images by normalizing and mean-centering using a Keras lambda
 |:--------:|:------------:|:------------:|
 | ![left][left] | ![center][center] | ![right][right] |
 
-**Cropped**
-|Left|Center|Right|
+**Cropped Images**
+
+| Left | Center | Right |
 |:--------:|:------------:|:------------:|
-|![left cropped][left-cropped]|![center cropped][center-cropped]|![right cropped][right-cropped]|
+| ![left cropped][left-cropped] | ![center cropped][center-cropped] | ![right cropped][right-cropped] |
 
 #### 2. Attempts to reduce overfitting in the model
 
