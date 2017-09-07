@@ -2,7 +2,7 @@
 
 ---
 
-** Behavioral Cloning Project**
+**Behavioral Cloning Project**
 
 The goals / steps of this project are the following:
 * Use the simulator to collect data of good driving behavior
@@ -70,15 +70,15 @@ I used the Nvidia architecture, which consists of the following layers:
 
 I preprocessed the images by normalizing and mean-centering using a Keras lambda layer. I also cropped the image using a Cropping2D layer to take 50 pixels from the top and 20 pixels from the bottom.
 
-** Original Images **
-|Left|Center|Right|
+**Original Images**
+| Left | Center | Right |
 |:--------:|:------------:|:------------:|
-|[![left][left]|[![center][center]|[![right][right]|
+|![left][left]|![center][center]|![right][right]|
 
-** Cropped **
+**Cropped**
 |Left|Center|Right|
 |:--------:|:------------:|:------------:|
-|[![left][left]|[![center][center]|[![right][right]|
+|![left cropped][left-cropped]|![center cropped][center-cropped]|![right cropped][right-cropped]|
 
 #### 2. Attempts to reduce overfitting in the model
 
