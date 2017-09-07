@@ -101,7 +101,7 @@ I had originally recorded many frames of data using the keyboard and mouse, in e
 
 I wrote a function to delete a percentage of these low-numbered measurements. Depending on the keep probability constant, a balanced dataset might look like this:
 
-![Balanced data][balanced-data-distribution]
+![Balanced data][balanced-data]
 
 The final model did not utilize this function, as it was unnecessary.
 
